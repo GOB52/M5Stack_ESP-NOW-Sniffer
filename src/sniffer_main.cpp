@@ -17,7 +17,7 @@
 # define CHANNEL_MIN (1)
 #endif
 #ifndef CHANNEL_MAX
-#pragma message "CHANNEL_MAX is not defined. set to 2"
+#pragma message "CHANNEL_MAX is not defined. set to 13"
 # define CHANNEL_MAX (13)
 #endif
 #ifndef QUEUE_SIZE
@@ -62,7 +62,6 @@ struct esp_now_frame_t
     
     static constexpr size_t minimum_length = 24 + 1 + 3 + 4 + 7 + 4;
     static constexpr size_t maximum_length = 24 + 1 + 3 + 4 + 257 + 4;
-    //    inline size_t size() const { return minimum_length - 7 +  vendor_content.length; }
 } __attribute__((__packed__));;
 
 auto& lcd = M5.Display;
