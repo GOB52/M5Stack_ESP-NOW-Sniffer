@@ -50,7 +50,7 @@ In non-Japan environments, appropriate define settings are required in build_fla
 | CHANNEL_MIN | Integer          | Minimum channel No |
 | CHANNEL_MAX | Integer          | Maximum channel No |
 
-## 操作方法
+## Operation
 
 | Button | Description |
 |---|---|
