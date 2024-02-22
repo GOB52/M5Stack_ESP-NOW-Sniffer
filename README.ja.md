@@ -1,10 +1,9 @@
 # M5Stack_ESP-NOW-Sniffer
 
-[日本語](README.ja.md)
+[English](README.md)
 
-
-## Overview
-ESP-NOW packets are sniffed by M5Stack and output to serial.
+## 概要
+ESP-NOW のパケットを、 M5Stack でスニッフィングしてシリアル出力します。
 
 ```log
 00:56:23.162 > [                   1]
@@ -29,9 +28,8 @@ ESP-NOW packets are sniffed by M5Stack and output to serial.
 00:56:23.782 > 00 52 2f 01 0b 00 06 48 01 00 73 
 ```
 
-## Compile environment
-For PlatformIO.  
-
+## コンパイル準備
+PlatformIO 前提となっています。
 ```ini
 ; **** Required setting ****
 ; Appropriate values for your environment.
@@ -41,26 +39,25 @@ For PlatformIO.
 build_flags = -Wall -Wextra -Wreturn-local-addr -Werror=format -Werror=return-local-addr
   -DCOUNTRY="\"JP\"" -DCHANNEL_MIN=1 -DCHANNEL_MAX=13
 ```
-
-In non-Japan environments, appropriate define settings are required in build_flags.
+日本以外の環境では build_flags で適切な define 設定が必要です。
 
 | Symbol      | Type          | Content            |
 |---|---|---|
-| COUNTRY     | String(2 characters) | Country code |
-| CHANNEL_MIN | Integer          | Minimum channel No |
-| CHANNEL_MAX | Integer          | Maximum channel No |
+| COUNTRY     | 文字列(2文字) | 国コード           |
+| CHANNEL_MIN | 数値          | 最小チャンネル番号 |
+| CHANNEL_MAX | 数値          | 最大チャンネル番号 |
+
 
 ## 操作方法
 
-| Button | Description |
+| ボタン | 機能 |
 |---|---|
-|A|Decrease channel No|
-|C|Increase channel No|
-|B|Start / Stop sniffing (toggle) |
+|A|チャンネル番号減少|
+|C|チャンネル番号増加|
+|B|スニッフィング開始/停止(トグル)|
 
-## Attention
-- Real-time performance is not high because output cannot keep up with the large number of packets to be captured.
-- I am referring to [this document](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html#frame-format), but my interpretation may be incorrect.
-
-
+## 注意
+- キャプチャするパケットが多いと出力が追い付かない為、リアルタイム性は高くありません。
+- [こちらの資料](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html#frame-format)を
+参考にしていますが、私の解釈が間違っているかもしれません。
 
