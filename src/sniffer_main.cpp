@@ -6,6 +6,7 @@
 #include <gob_unifiedButton.hpp> // For CoreS3
 #include <freertos/FreeRTOS.h>
 #include <cstring>
+#include "for_gob_esp_now.hpp"
 
 // Settings (See also build_flags in platformio.ini)
 #ifndef COUNTRY
@@ -82,15 +83,6 @@ bool sniff{true}, failed{true};
 QueueHandle_t queue;
 uint64_t hcount{}, ocount{};
 
-void dump(const uint8_t* buf, const size_t len)
-{
-    for(size_t i = 0; i < len; ++i)
-    {
-        M5.Log.printf("%02x%c", buf[i], ((i + 1) % 16) ? ' ' : '\n');
-    }
-    M5.Log.println();
-}
-
 bool is_esp_now_packet(const wifi_promiscuous_pkt_t* pkt)
 {
     if(pkt->rx_ctrl.sig_len >= esp_now_frame_t::minimum_length)
@@ -130,6 +122,17 @@ void packet_handler(void* buf, wifi_promiscuous_pkt_type_t type)
     }
     ++hcount;
 }
+//
+}
+
+void dump(const uint8_t* buf, const size_t len)
+{
+    for(size_t i = 0; i < len; ++i)
+    {
+        M5.Log.printf("%02x%c", buf[i], ((i + 1) % 16) ? ' ' : '\n');
+    }
+    M5.Log.println();
+}
 
 // Must be process in Core1
 void output_task(void*)
@@ -145,22 +148,36 @@ void output_task(void*)
         auto src = enf->mac_header.addr1;
         ++ocount;
 
-        M5.Log.printf(
-            "[%20llu]\n\r"
-            "src : %02x:%02x:%02x:%02x:%02x:%02x\n\r"
-            "dest: %02x:%02x:%02x:%02x:%02x:%02x\n\r"
-            "payload: %u\n\r"
-            ,
-            ocount,
-            src[0], src[1], src[2], src[3], src[4], src[5],
-            dst[0], dst[1], dst[2], dst[3], dst[4], dst[5],
-            enf->vendor_content.bodySize()
-                      );
-        dump(enf->vendor_content.body, enf->vendor_content.bodySize());
+        if(is_gob_esp_now_packet(enf->vendor_content.body, enf->vendor_content.bodySize()))
+        {
+            M5.Log.printf(
+                "[%20llu]\n\r"
+                "src : %02x:%02x:%02x:%02x:%02x:%02x\n\r"
+                "dest: %02x:%02x:%02x:%02x:%02x:%02x\n\r"
+                ,
+                ocount,
+                src[0], src[1], src[2], src[3], src[4], src[5],
+                dst[0], dst[1], dst[2], dst[3], dst[4], dst[5]
+                          );
+                output_gob_esp_now_payload(enf->vendor_content.body);
+        }
+        else
+        {
+            M5.Log.printf(
+                "[%20llu]\n\r"
+                "src : %02x:%02x:%02x:%02x:%02x:%02x\n\r"
+                "dest: %02x:%02x:%02x:%02x:%02x:%02x\n\r"
+                "payload: %u\n\r"
+                ,
+                ocount,
+                src[0], src[1], src[2], src[3], src[4], src[5],
+                dst[0], dst[1], dst[2], dst[3], dst[4], dst[5],
+                enf->vendor_content.bodySize()
+                          );
+            dump(enf->vendor_content.body, enf->vendor_content.bodySize());
+        }
         free(p);
     }
-}
-//
 }
 
 void setup()
